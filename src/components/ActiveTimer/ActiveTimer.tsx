@@ -7,7 +7,7 @@ interface Props {
   clockNotation?: boolean;
 }
 
-const ActiveTimer: React.FC<Props> = (props) => {
+const ActiveTimer: React.FC<Props> = props => {
   const hours = Math.floor(props.seconds / 3600);
   const minutes = Math.floor((props.seconds % 3600) / 60);
   const seconds = props.seconds % 60;
