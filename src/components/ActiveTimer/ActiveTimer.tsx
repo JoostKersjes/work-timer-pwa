@@ -1,19 +1,29 @@
-import React from "react";
-import { Moment } from "moment";
+import React from 'react';
 
-import styles from "./ActiveTimer.module.css";
+import styles from './ActiveTimer.module.css';
 
 interface Props {
-  timer: Moment;
+  seconds: number;
+  clockNotation?: boolean;
 }
 
 const ActiveTimer: React.FC<Props> = (props) => {
+  const hours = Math.floor(props.seconds / 3600);
+  const minutes = Math.floor((props.seconds % 3600) / 60);
+  const seconds = props.seconds % 60;
+
   return (
     <div>
-      <span className={styles.clock}>
-        {props.timer.format("HH")}:{props.timer.format("mm")}
-      </span>
-      <span className={styles.seconds}>{props.timer.format("ss")}</span>
+      {props.clockNotation ? (
+        <span className={styles.clock}>
+          {hours}:{minutes}
+        </span>
+      ) : (
+        <span className={styles.clock}>
+          {hours}h {minutes}m
+        </span>
+      )}
+      <span className={styles.seconds}>{seconds}</span>
     </div>
   );
 };
