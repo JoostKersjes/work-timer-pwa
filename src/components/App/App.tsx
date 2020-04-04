@@ -1,8 +1,8 @@
 import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
-const Log = lazy(() => import("./Log"));
-const Timer = lazy(() => import("./Timer"));
+const Log = lazy(() => import("../Log/Log"));
+const Timer = lazy(() => import("../Timer/Timer"));
 
 const App: React.FC = () => (
   <Router>
