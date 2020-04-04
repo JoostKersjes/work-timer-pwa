@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useReducer } from 'react';
 
 enum ActionType {
   Start = 'start',
-  Pause = 'pause',
+  StartNew = 'start-new',
   Stop = 'stop',
   Increment = 'increment',
 }
@@ -26,8 +26,8 @@ const reducer: React.Reducer<IState, IAction> = (state, action) => {
     case ActionType.Start:
       return { ...state, started: true };
 
-    case ActionType.Pause:
-      return { ...state, started: false };
+    case ActionType.StartNew:
+      return { ...state, seconds: 0 };
 
     case ActionType.Stop:
       return { ...state, started: false, seconds: 0 };
@@ -65,8 +65,9 @@ const useStopwatch = () => {
 
   return {
     seconds,
+    started,
     start: () => dispatch({ type: ActionType.Start }),
-    pause: () => dispatch({ type: ActionType.Pause }),
+    startNew: () => dispatch({ type: ActionType.StartNew }),
     stop: () => dispatch({ type: ActionType.Stop }),
   };
 };
