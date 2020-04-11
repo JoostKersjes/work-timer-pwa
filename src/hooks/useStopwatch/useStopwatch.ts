@@ -7,21 +7,21 @@ enum ActionType {
   Increment = 'increment',
 }
 
-interface IState {
+interface State {
   seconds: number;
   started: boolean;
 }
 
-interface IAction {
+interface Action {
   type: ActionType;
 }
 
-const initialState: IState = {
+const initialState: State = {
   seconds: 0,
   started: false,
 };
 
-const reducer: React.Reducer<IState, IAction> = (state, action) => {
+const reducer: React.Reducer<State, Action> = (state, action) => {
   switch (action.type) {
     case ActionType.Start:
       return { ...state, started: true };
