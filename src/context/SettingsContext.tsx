@@ -6,8 +6,6 @@ interface State {
 
 type Actions = { type: 'ToggleNotation' };
 
-const initialState: State = { clockNotation: false };
-
 const reducer: React.Reducer<State, Actions> = (state, action) => {
   switch (action.type) {
     case 'ToggleNotation':
@@ -18,12 +16,17 @@ const reducer: React.Reducer<State, Actions> = (state, action) => {
   }
 };
 
-export const SettingsContext = createContext<{ state: State; dispatch: Dispatch<Actions> }>({
+const initialState: State = { clockNotation: false };
+
+export const SettingsContext = createContext<{
+  state: State;
+  dispatch: Dispatch<Actions>;
+}>({
   state: initialState,
   dispatch: () => null,
 });
 
-export const SettingsContextProviders: React.FC = props => {
+export const SettingsContextProvider: React.FC = props => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (

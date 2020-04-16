@@ -130,7 +130,7 @@ export const TasksContext = createContext<{
   dispatch: () => null,
 });
 
-export const TasksContextProviders: React.FC = props => {
+export const TasksContextProvider: React.FC = props => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {

@@ -1,12 +1,12 @@
 import React from 'react';
-import { SettingsContextProviders } from './SettingsContext';
-import { TasksContextProviders } from './TasksContext';
+import { SettingsContextProvider } from './SettingsContext';
+import { TasksContextProvider } from './TasksContext';
 
 const Providers: React.FC = props => {
   return (
-    <SettingsContextProviders>
-      <TasksContextProviders>{props.children}</TasksContextProviders>
-    </SettingsContextProviders>
+    <SettingsContextProvider>
+      <TasksContextProvider>{props.children}</TasksContextProvider>
+    </SettingsContextProvider>
   );
 };
 
