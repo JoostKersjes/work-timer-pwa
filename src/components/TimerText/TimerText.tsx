@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
 
 import styles from './TimerText.module.css';
-import { SettingsStateContext } from '../../context/SettingsContext';
+import { SettingsContext } from '../../context/SettingsContext';
 
 interface Props {
   seconds: number;
 }
 
 const TimerText: React.FC<Props> = props => {
-  const state = useContext(SettingsStateContext);
+  const { state } = useContext(SettingsContext);
 
   const hours = Math.floor(props.seconds / 3600);
   const minutes = Math.floor((props.seconds % 3600) / 60);

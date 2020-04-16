@@ -2,18 +2,14 @@ import React, { useContext } from 'react';
 import TimerText from '../TimerText/TimerText';
 import { Task } from '../../types/task';
 import Button from 'antd/es/button';
-import { TasksDispatchContext, ActionType } from '../../context/TasksContext';
+import { TasksContext } from '../../context/TasksContext';
 
 interface Props {
   task: Task;
 }
 
 const LoggedTask: React.FC<Props> = props => {
-  const dispatch = useContext(TasksDispatchContext);
-
-  if (undefined === dispatch) {
-    return <></>;
-  }
+  const { dispatch } = useContext(TasksContext);
 
   return (
     <div>
@@ -29,7 +25,7 @@ const LoggedTask: React.FC<Props> = props => {
           {!props.task.archived && (
             <Button
               onClick={() => {
-                dispatch({ type: ActionType.Archive, payload: { taskId: props.task.id } });
+                dispatch({ type: 'Archive', payload: { taskId: props.task.id } });
               }}
             >
               Log

@@ -6,48 +6,35 @@ import { Task } from '../types/task';
 
 const TASKS_KEY = 'wtpwa_tasks';
 
-export enum ActionType {
-  LoadFromStorage,
-  CreateNew,
-  AddTimers,
-  Archive,
-}
-
 interface State {
   tasks: Task[];
 }
 
-type Action =
+type Actions =
   | {
-      type: ActionType.LoadFromStorage;
+      type: 'LoadFromStorage';
     }
   | {
-      type: ActionType.CreateNew;
-      payload: CreateNewPayload;
+      type: 'CreateNew';
+      payload: {
+        timer: Timer;
+        description: string | null;
+        color: string | null;
+      };
     }
   | {
-      type: ActionType.AddTimers;
-      payload: AddTimersPayload;
+      type: 'AddTimers';
+      payload: {
+        taskId: string;
+        timers: Timer[];
+      };
     }
   | {
-      type: ActionType.Archive;
-      payload: ArchivePayload;
+      type: 'Archive';
+      payload: {
+        taskId: string;
+      };
     };
-
-interface CreateNewPayload {
-  timer: Timer;
-  description: string | null;
-  color: string | null;
-}
-
-interface AddTimersPayload {
-  taskId: string;
-  timers: Timer[];
-}
-
-interface ArchivePayload {
-  taskId: string;
-}
 
 interface StoredTimer {
   id: string;
@@ -64,9 +51,9 @@ interface StoredTask {
   timers: StoredTimer[];
 }
 
-const reducer: React.Reducer<State, Action> = (state, action) => {
+const reducer: React.Reducer<State, Actions> = (state, action) => {
   switch (action.type) {
-    case ActionType.LoadFromStorage:
+    case 'LoadFromStorage':
       return {
         ...state,
         tasks: JSON.parse(localStorage.getItem(TASKS_KEY) || '[]').map((task: StoredTask) => ({
@@ -79,7 +66,7 @@ const reducer: React.Reducer<State, Action> = (state, action) => {
         })),
       };
 
-    case ActionType.CreateNew:
+    case 'CreateNew':
       return {
         ...state,
         tasks: [
@@ -94,7 +81,7 @@ const reducer: React.Reducer<State, Action> = (state, action) => {
         ],
       };
 
-    case ActionType.AddTimers:
+    case 'AddTimers':
       return {
         ...state,
         tasks: state.tasks.map(task => {
@@ -111,7 +98,7 @@ const reducer: React.Reducer<State, Action> = (state, action) => {
         }),
       };
 
-    case ActionType.Archive:
+    case 'Archive':
       return {
         ...state,
         tasks: state.tasks.map(task => {
@@ -135,8 +122,13 @@ const initialState: State = {
   tasks: [],
 };
 
-export const TasksStateContext = createContext(initialState);
-export const TasksDispatchContext = createContext<Dispatch<Action> | undefined>(undefined);
+export const TasksContext = createContext<{
+  state: State;
+  dispatch: Dispatch<Actions>;
+}>({
+  state: initialState,
+  dispatch: () => null,
+});
 
 export const TasksContextProviders: React.FC = props => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -150,14 +142,10 @@ export const TasksContextProviders: React.FC = props => {
 
   useEffect(() => {
     console.log('loading');
-    dispatch({ type: ActionType.LoadFromStorage });
+    dispatch({ type: 'LoadFromStorage' });
   }, [dispatch]);
 
   return (
-    <TasksStateContext.Provider value={state}>
-      <TasksDispatchContext.Provider value={dispatch}>
-        {props.children}
-      </TasksDispatchContext.Provider>
-    </TasksStateContext.Provider>
+    <TasksContext.Provider value={{ state, dispatch }}>{props.children}</TasksContext.Provider>
   );
 };

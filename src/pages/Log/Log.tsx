@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
-import { TasksStateContext } from '../../context/TasksContext';
+import { TasksContext } from '../../context/TasksContext';
 import LoggedTask from '../../components/LoggedTask/LoggedTask';
 
 const Log: React.FC = () => {
-  const { tasks } = useContext(TasksStateContext);
+  const {
+    state: { tasks },
+  } = useContext(TasksContext);
 
   return (
     <div>
