@@ -23,16 +23,23 @@ type Actions =
       };
     }
   | {
-      type: 'AddTimers';
+      type: 'Combine';
       payload: {
-        taskId: string;
-        timers: Timer[];
+        sourceTaskId: string;
+        targetTaskId: string;
       };
     }
   | {
       type: 'Archive';
       payload: {
         taskId: string;
+      };
+    }
+  | {
+      type: 'ChangeOrder';
+      payload: {
+        taskId: string;
+        newIndex: number;
       };
     };
 
@@ -81,21 +88,30 @@ const reducer: React.Reducer<State, Actions> = (state, action) => {
         ],
       };
 
-    case 'AddTimers':
+    case 'Combine':
+      const inheritedTimers = state.tasks.find(task => action.payload.sourceTaskId === task.id)
+        ?.timers;
+
+      if (!inheritedTimers) {
+        return state;
+      }
+
       return {
         ...state,
-        tasks: state.tasks.map(task => {
-          if (action.payload.taskId !== task.id) {
-            return task;
-          }
+        tasks: state.tasks
+          .filter(task => action.payload.sourceTaskId !== task.id)
+          .map(task => {
+            if (action.payload.targetTaskId !== task.id) {
+              return task;
+            }
 
-          return {
-            ...task,
-            timers: [...task.timers, ...action.payload.timers].sort(
-              (a, b) => a.startDate.unix() - b.startDate.unix(),
-            ),
-          };
-        }),
+            return {
+              ...task,
+              timers: [...task.timers, ...inheritedTimers].sort(
+                (a, b) => a.startDate.unix() - b.startDate.unix(),
+              ),
+            };
+          }),
       };
 
     case 'Archive':
@@ -111,6 +127,17 @@ const reducer: React.Reducer<State, Actions> = (state, action) => {
             archived: true,
           };
         }),
+      };
+
+    case 'ChangeOrder':
+      const newTasks = state.tasks;
+      const oldIndex = newTasks.findIndex(task => action.payload.taskId === task.id);
+      const splicedTask = newTasks.splice(oldIndex, 1)[0];
+      newTasks.splice(action.payload.newIndex, 0, splicedTask);
+
+      return {
+        ...state,
+        tasks: newTasks,
       };
 
     default:
@@ -138,7 +165,7 @@ export const TasksContextProvider: React.FC = props => {
       console.log('saving');
       localStorage.setItem(TASKS_KEY, JSON.stringify(state.tasks));
     }
-  }, [state.tasks]);
+  }, [state.tasks]); // TODO: trigger on order change
 
   useEffect(() => {
     console.log('loading');
