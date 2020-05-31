@@ -165,7 +165,7 @@ export const TasksContextProvider: React.FC = props => {
       console.log('saving');
       localStorage.setItem(TASKS_KEY, JSON.stringify(state.tasks));
     }
-  }, [state.tasks]); // TODO: trigger on order change
+  }, [state]);
 
   useEffect(() => {
     console.log('loading');
