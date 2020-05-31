@@ -5,9 +5,11 @@ import { Timer } from '../types/timer';
 import { Task } from '../types/task';
 
 const TASKS_KEY = 'wtpwa_tasks';
+const ARCHIVE_KEY = 'wtpwa_archive';
 
 interface State {
   tasks: Task[];
+  archive: Task[];
 }
 
 type Actions =
@@ -54,8 +56,14 @@ interface StoredTask {
   id: string;
   description: string;
   color: string;
-  archived: boolean;
   timers: StoredTimer[];
+}
+
+function sortArchive(a: Task, b: Task): number {
+  const aTimer = a.timers[0]?.startDate.unix() || 0;
+  const bTimer = b.timers[0]?.startDate.unix() || 0;
+
+  return aTimer - bTimer;
 }
 
 const reducer: React.Reducer<State, Actions> = (state, action) => {
@@ -64,6 +72,14 @@ const reducer: React.Reducer<State, Actions> = (state, action) => {
       return {
         ...state,
         tasks: JSON.parse(localStorage.getItem(TASKS_KEY) || '[]').map((task: StoredTask) => ({
+          ...task,
+          timers: task.timers.map(timer => ({
+            ...timer,
+            startDate: moment(timer.startDate),
+            endDate: moment(timer.endDate),
+          })),
+        })),
+        archive: JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]').map((task: StoredTask) => ({
           ...task,
           timers: task.timers.map(timer => ({
             ...timer,
@@ -82,7 +98,6 @@ const reducer: React.Reducer<State, Actions> = (state, action) => {
             id: uuid(),
             description: action.payload.description ?? 'New task',
             color: action.payload.color ?? '#fff',
-            archived: false,
             timers: [action.payload.timer],
           },
         ],
@@ -115,18 +130,16 @@ const reducer: React.Reducer<State, Actions> = (state, action) => {
       };
 
     case 'Archive':
+      const taskToArchive = state.tasks.find(task => action.payload.taskId === task.id);
+
+      if (!taskToArchive) {
+        return state;
+      }
+
       return {
         ...state,
-        tasks: state.tasks.map(task => {
-          if (action.payload.taskId !== task.id) {
-            return task;
-          }
-
-          return {
-            ...task,
-            archived: true,
-          };
-        }),
+        tasks: state.tasks.filter(task => action.payload.taskId !== task.id),
+        archive: state.archive.concat([taskToArchive]).sort(sortArchive),
       };
 
     case 'ChangeOrder':
@@ -147,6 +160,7 @@ const reducer: React.Reducer<State, Actions> = (state, action) => {
 
 const initialState: State = {
   tasks: [],
+  archive: [],
 };
 
 export const TasksContext = createContext<{
@@ -164,6 +178,7 @@ export const TasksContextProvider: React.FC = props => {
     if (state.tasks.length > 0) {
       console.log('saving');
       localStorage.setItem(TASKS_KEY, JSON.stringify(state.tasks));
+      localStorage.setItem(ARCHIVE_KEY, JSON.stringify(state.archive));
     }
   }, [state]);
 

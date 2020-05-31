@@ -7,6 +7,7 @@ import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 
 interface Props {
   task: Task;
+  archived: boolean;
   dragHandleProps?: DraggableProvidedDragHandleProps;
 }
 
@@ -29,7 +30,7 @@ const LoggedTask: React.FC<Props> = props => {
         </div>
       ))}
 
-      {!props.task.archived && (
+      {!props.archived && (
         <Button
           onClick={() => {
             dispatch({ type: 'Archive', payload: { taskId: props.task.id } });

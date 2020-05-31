@@ -13,17 +13,19 @@ const TimerList: React.FC<Props> = props => {
     <Droppable droppableId="TimerList" isCombineEnabled={true}>
       {(provided, snapshot) => (
         <div ref={provided.innerRef} {...provided.droppableProps}>
-          {tasks
-            .filter(task => false === task.archived)
-            .map((task, index) => (
-              <Draggable key={task.id} index={index} draggableId={task.id}>
-                {(provided, snapshot) => (
-                  <div ref={provided.innerRef} {...provided.draggableProps}>
-                    <LoggedTask task={task} dragHandleProps={provided.dragHandleProps} />
-                  </div>
-                )}
-              </Draggable>
-            ))}
+          {tasks.map((task, index) => (
+            <Draggable key={task.id} index={index} draggableId={task.id}>
+              {(provided, snapshot) => (
+                <div ref={provided.innerRef} {...provided.draggableProps}>
+                  <LoggedTask
+                    task={task}
+                    archived={false}
+                    dragHandleProps={provided.dragHandleProps}
+                  />
+                </div>
+              )}
+            </Draggable>
+          ))}
 
           {provided.placeholder}
         </div>

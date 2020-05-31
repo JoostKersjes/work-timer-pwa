@@ -4,16 +4,14 @@ import LoggedTask from '../../components/LoggedTask/LoggedTask';
 
 const Log: React.FC = () => {
   const {
-    state: { tasks },
+    state: { archive },
   } = useContext(TasksContext);
 
   return (
     <div>
-      {tasks
-        .filter(task => true === task.archived)
-        .map(task => (
-          <LoggedTask key={task.id} task={task} />
-        ))}
+      {archive.map(task => (
+        <LoggedTask key={task.id} task={task} archived={true} />
+      ))}
     </div>
   );
 };
