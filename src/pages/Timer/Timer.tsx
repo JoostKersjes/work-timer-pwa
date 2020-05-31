@@ -4,26 +4,21 @@ import moment from 'moment';
 import ActiveTimer from '../../components/ActiveTimer/ActiveTimer';
 import useStopwatch from '../../hooks/useStopwatch/useStopwatch';
 import TimerControls from '../../components/TimerControls/TimerControls';
-import LoggedTask from '../../components/LoggedTask/LoggedTask';
 import { TasksContext } from '../../context/TasksContext';
+import TimerList from '../../components/TimerList/TimerList';
 
 const Timer: React.FC = () => {
   const { seconds, started, start, startNew, stop } = useStopwatch();
-  const {
-    state: { tasks },
-    dispatch,
-  } = useContext(TasksContext);
+  const { dispatch } = useContext(TasksContext);
 
   const [startDate, setStartDate] = useState(moment());
 
   return (
     <div>
-      {tasks
-        .filter(task => false === task.archived)
-        .map(task => (
-          <LoggedTask key={task.id} task={task} />
-        ))}
+      <TimerList />
+
       <ActiveTimer seconds={seconds} />
+
       <TimerControls
         started={started}
         onClickStart={() => {
