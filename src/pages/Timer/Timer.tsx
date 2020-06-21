@@ -2,13 +2,13 @@ import React, { useContext, useState } from 'react';
 import { uuid } from 'uuidv4';
 import moment from 'moment';
 import ActiveTimer from '../../components/ActiveTimer/ActiveTimer';
-import useStopwatch from '../../hooks/useStopwatch/useStopwatch';
+import Stopwatch from '../../hooks/useStopwatch/useStopwatch';
 import TimerControls from '../../components/TimerControls/TimerControls';
 import { TasksContext } from '../../context/TasksContext';
 import TimerList from '../../components/TimerList/TimerList';
 
 const Timer: React.FC = () => {
-  const { seconds, started, start, startNew, stop } = useStopwatch();
+  const { seconds, started, start, stop } = Stopwatch.useContainer();
   const { dispatch } = useContext(TasksContext);
 
   const [startDate, setStartDate] = useState(moment());
@@ -38,7 +38,7 @@ const Timer: React.FC = () => {
 
           setStartDate(moment());
 
-          startNew();
+          start();
         }}
         onClickStop={() => {
           dispatch({

@@ -1,38 +1,36 @@
 import React, { useEffect, useRef, useReducer } from 'react';
-
-enum ActionType {
-  Start = 'start',
-  StartNew = 'start-new',
-  Stop = 'stop',
-  Increment = 'increment',
-}
+import { createContainer } from 'unstated-next';
 
 interface State {
   seconds: number;
   started: boolean;
 }
 
-interface Action {
-  type: ActionType;
-}
+type Actions =
+  | {
+      type: 'Start';
+    }
+  | {
+      type: 'Stop';
+    }
+  | {
+      type: 'Increment';
+    };
 
 const initialState: State = {
   seconds: 0,
   started: false,
 };
 
-const reducer: React.Reducer<State, Action> = (state, action) => {
+const reducer: React.Reducer<State, Actions> = (state, action) => {
   switch (action.type) {
-    case ActionType.Start:
-      return { ...state, started: true };
+    case 'Start':
+      return { ...state, started: true, seconds: 0 };
 
-    case ActionType.StartNew:
-      return { ...state, seconds: 0 };
-
-    case ActionType.Stop:
+    case 'Stop':
       return { ...state, started: false, seconds: 0 };
 
-    case ActionType.Increment:
+    case 'Increment':
       return {
         ...state,
         seconds: state.seconds + 1,
@@ -50,7 +48,7 @@ const useStopwatch = () => {
   useEffect(() => {
     if (started) {
       const id = setInterval(() => {
-        dispatch({ type: ActionType.Increment });
+        dispatch({ type: 'Increment' });
       }, 1000);
 
       intervalRef.current = id;
@@ -66,10 +64,9 @@ const useStopwatch = () => {
   return {
     seconds,
     started,
-    start: () => dispatch({ type: ActionType.Start }),
-    startNew: () => dispatch({ type: ActionType.StartNew }),
-    stop: () => dispatch({ type: ActionType.Stop }),
+    start: () => dispatch({ type: 'Start' }),
+    stop: () => dispatch({ type: 'Stop' }),
   };
 };
 
-export default useStopwatch;
+export default createContainer(useStopwatch);
